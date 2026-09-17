@@ -96,9 +96,7 @@ test.describe('keyboard', () => {
   test('contact form: the error summary takes focus and links to the field', async ({ page }, testInfo) => {
     await page.goto('/contact')
     await settle(page)
-    await page.waitForTimeout(3200)
     await page.fill('input[name="name"]', 'Test Person')
-    await page.fill('input[name="email"]', 'test@example.com')
     await page.getByRole('radio', { name: 'Both' }).check()
     await page.fill('textarea[name="brief"]', 'too short')
     await page.locator('button[type="submit"]').focus()

@@ -17,6 +17,7 @@ export interface SiteSettings {
   email?: string
   location?: string
   social?: CtaLink[]
+  scheduleLink?: CtaLink
   careerPortfolio?: CtaLink
 }
 
@@ -57,6 +58,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         wordmark={settings?.wordmark}
         email={settings?.email}
         location={settings?.location}
+        scheduleLink={settings?.scheduleLink}
         careerPortfolio={settings?.careerPortfolio}
       />
 

@@ -1,7 +1,8 @@
 /**
- * The contact form's field spec and validation, shared by the client form and
- * the API route so both sides agree on what a valid inquiry is. No `server-only`
- * here: the client imports it for the service list and the field names.
+ * The contact form's field spec, validation and the mailto it composes.
+ *
+ * There is no server: the form gathers the brief so the visitor's email arrives
+ * with everything in it, then hands off to their own mail app.
  */
 export const SERVICES = [
   { value: 'ux', label: 'UX & product design' },
@@ -14,7 +15,6 @@ export const isServiceKey = (v: unknown): v is ServiceKey => SERVICES.some((s) =
 
 export interface ContactInput {
   name: string
-  email: string
   company?: string
   service: ServiceKey
   brief: string
@@ -25,14 +25,11 @@ export interface ContactInput {
 
 export type ContactErrors = Partial<Record<keyof ContactInput, string>>
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
 const str = (v: unknown) => (typeof v === 'string' ? v.trim() : '')
 
 export function validate(input: Record<string, unknown>): { ok: true; data: ContactInput } | { ok: false; errors: ContactErrors } {
   const errors: ContactErrors = {}
   const name = str(input.name)
-  const email = str(input.email)
   const company = str(input.company)
   const service = str(input.service)
   const brief = str(input.brief)
@@ -41,19 +38,8 @@ export function validate(input: Record<string, unknown>): { ok: true; data: Cont
   const links = str(input.links)
 
   if (name.length < 2) errors.name = 'Please tell me your name.'
-  else if (name.length > 120) errors.name = 'That name is a little long.'
-
-  if (!EMAIL.test(email)) errors.email = 'Please enter an email address I can reply to.'
-
-  if (company.length > 200) errors.company = 'Keep the company or project name under 200 characters.'
-
   if (!isServiceKey(service)) errors.service = 'Choose the kind of project.'
-
   if (brief.length < 20) errors.brief = 'A few sentences about the project helps me reply with something useful.'
-  else if (brief.length > 4000) errors.brief = 'Please keep the brief under 4000 characters; we can go deeper by email.'
-
-  if (timing.length > 200) errors.timing = 'Keep timing under 200 characters.'
-  if (budget.length > 200) errors.budget = 'Keep the budget under 200 characters.'
 
   if (links) {
     const bad = links
@@ -62,7 +48,6 @@ export function validate(input: Record<string, unknown>): { ok: true; data: Cont
       .filter(Boolean)
       .find((l) => !/^https?:\/\/\S+$/.test(l))
     if (bad) errors.links = 'Links should be full URLs, one per line, starting with http:// or https://.'
-    if (links.length > 2000) errors.links = 'Keep links under 2000 characters.'
   }
 
   if (Object.keys(errors).length) return { ok: false, errors }
@@ -70,7 +55,6 @@ export function validate(input: Record<string, unknown>): { ok: true; data: Cont
     ok: true,
     data: {
       name,
-      email,
       company: company || undefined,
       service: service as ServiceKey,
       brief,
@@ -81,21 +65,33 @@ export function validate(input: Record<string, unknown>): { ok: true; data: Cont
   }
 }
 
+export function serviceLabel(key: ServiceKey) {
+  return SERVICES.find((s) => s.value === key)?.label ?? key
+}
+
 /** The plain-text email body. */
 export function formatInquiry(d: ContactInput): string {
-  const label = SERVICES.find((s) => s.value === d.service)?.label ?? d.service
   return [
-    `Name: ${d.name}`,
-    `Email: ${d.email}`,
+    `Hi Angelika,`,
+    '',
+    d.brief,
+    '',
+    `Project: ${serviceLabel(d.service)}`,
     d.company ? `Company / project: ${d.company}` : null,
-    `Service: ${label}`,
     d.timing ? `Timing: ${d.timing}` : null,
     d.budget ? `Budget: ${d.budget}` : null,
+    d.links ? `Links:\n${d.links}` : null,
     '',
-    'Brief:',
-    d.brief,
-    d.links ? ['', 'Links:', d.links].join('\n') : null,
+    d.name,
   ]
     .filter((line) => line !== null)
     .join('\n')
+}
+
+/** A `mailto:` that opens the visitor's mail app with the brief filled in. */
+export function buildMailto(to: string, d: ContactInput): string {
+  const subject = `${serviceLabel(d.service)} project: ${d.company || d.name}`
+  const params = new URLSearchParams({ subject, body: formatInquiry(d) })
+  // URLSearchParams encodes spaces as "+", which mail clients read literally.
+  return `mailto:${to}?${params.toString().replace(/\+/g, '%20')}`
 }

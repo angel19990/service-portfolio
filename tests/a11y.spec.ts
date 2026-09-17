@@ -52,11 +52,7 @@ test.describe('axe: non-default states', () => {
   test('contact form: error state', async ({ page }, testInfo) => {
     await page.goto('/contact')
     await settle(page)
-    // Past the server's time trap, which silently accepts anything sent within
-    // three seconds of mount.
-    await page.waitForTimeout(3200)
     await page.fill('input[name="name"]', 'Test Person')
-    await page.fill('input[name="email"]', 'test@example.com')
     await page.getByRole('radio', { name: 'UX & product design' }).check()
     await page.fill('textarea[name="brief"]', 'too short')
     await page.click('button[type="submit"]')
@@ -64,16 +60,14 @@ test.describe('axe: non-default states', () => {
     await checkA11y(page, `contact, error state @ ${testInfo.project.name}`)
   })
 
-  test('contact form: success state', async ({ page }, testInfo) => {
+  test('contact form: ready state', async ({ page }, testInfo) => {
     await page.goto('/contact?service=video')
     await settle(page)
-    await page.waitForTimeout(3200)
     await page.fill('input[name="name"]', 'Test Person')
-    await page.fill('input[name="email"]', 'test@example.com')
     await page.fill('textarea[name="brief"]', 'A short launch video for a small product, for the website and social.')
     await page.click('button[type="submit"]')
     await page.locator('[role="status"]').waitFor()
-    await checkA11y(page, `contact, success state @ ${testInfo.project.name}`)
+    await checkA11y(page, `contact, ready state @ ${testInfo.project.name}`)
   })
 
   test('nav sheet open', async ({ page }, testInfo) => {

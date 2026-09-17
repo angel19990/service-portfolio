@@ -27,6 +27,12 @@ export const siteSettings = defineType({
       description: 'Instagram, LinkedIn. Rendered in the footer.',
     }),
     defineField({
+      name: 'scheduleLink',
+      title: 'Schedule a call link',
+      type: 'ctaLink',
+      description: 'The booking page. Shown on the contact page, in the footer and in closing invitations.',
+    }),
+    defineField({
       name: 'careerPortfolio',
       title: 'Career portfolio link',
       type: 'ctaLink',

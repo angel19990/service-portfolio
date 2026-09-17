@@ -1,7 +1,10 @@
 import { Heading, RichText, Eyebrow } from '@/components/primitives'
 import { Reveal } from '@/components/interactive'
 import { ContactForm } from '@/components/contact/ContactForm'
-import type { RichHeading, PortableTextBlock } from '@/sanity/types'
+import { sanityFetch } from '@/sanity/lib/live'
+import { siteSettingsQuery } from '@/sanity/lib/queries'
+import { CONTACT_EMAIL } from '@/lib/site'
+import type { RichHeading, PortableTextBlock, CtaLink } from '@/sanity/types'
 
 export interface SectionContactFormData {
   id?: string
@@ -14,25 +17,20 @@ export interface SectionContactFormData {
   budgetOptions?: string[]
   successHeading?: string
   successBody?: PortableTextBlock[]
-  errorBody?: PortableTextBlock[]
   emailNote?: PortableTextBlock[]
 }
 
 /**
- * Server shell for the contact form: renders every piece of copy to ReactNodes
- * and hands them to the client form.
+ * Server shell for the contact form: reads the email and the scheduling link
+ * from site settings, renders every piece of copy to ReactNodes and hands the
+ * lot to the client form.
  */
-export function SectionContactForm({ data, index = 0 }: { data: SectionContactFormData; index?: number }) {
-  const form = (
-    <ContactForm
-      timingOptions={data.timingOptions}
-      budgetOptions={data.budgetOptions}
-      successHeading={data.successHeading || 'Thanks, I have it.'}
-      success={<RichText value={data.successBody} />}
-      errorFallback={<RichText value={data.errorBody} />}
-      emailNote={<RichText value={data.emailNote} className="gap-1" />}
-    />
-  )
+export async function SectionContactForm({ data, index = 0 }: { data: SectionContactFormData; index?: number }) {
+  const settings = await sanityFetch<{ email?: string; scheduleLink?: CtaLink } | null>(siteSettingsQuery)
+  const email = settings?.email || CONTACT_EMAIL
+  const schedule = settings?.scheduleLink?.href
+    ? { label: settings.scheduleLink.label, href: settings.scheduleLink.href }
+    : undefined
 
   return (
     <section id={data.id} className="px-gutter pb-section">
@@ -48,7 +46,15 @@ export function SectionContactForm({ data, index = 0 }: { data: SectionContactFo
               </div>
             )}
           </div>
-          {form}
+          <ContactForm
+            email={email}
+            schedule={schedule}
+            timingOptions={data.timingOptions}
+            budgetOptions={data.budgetOptions}
+            successHeading={data.successHeading || 'Your email is ready.'}
+            success={<RichText value={data.successBody} />}
+            emailNote={<RichText value={data.emailNote} className="gap-1" />}
+          />
         </div>
       </Reveal>
     </section>

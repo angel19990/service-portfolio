@@ -58,9 +58,7 @@ export default defineConfig({
   webServer: REMOTE
     ? undefined
     : {
-        // Dry run: the contact form logs instead of sending, so the suite can
-        // exercise its success state without a Resend key.
-        command: `CONTACT_DRY_RUN=1 npx next start -p ${PORT}`,
+        command: `npx next start -p ${PORT}`,
         url: `http://localhost:${PORT}/`,
         reuseExistingServer: true,
         timeout: 120_000,

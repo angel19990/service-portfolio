@@ -1,53 +1,45 @@
 'use client'
 
-import { useEffect, useId, useRef, useState, useTransition, type FormEvent, type ReactNode } from 'react'
-import { SERVICES, isServiceKey, type ContactErrors } from '@/lib/contact'
+import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { SERVICES, isServiceKey, validate, buildMailto, type ContactErrors } from '@/lib/contact'
 
-type State =
-  | { status: 'idle' }
-  | { status: 'success' }
-  | { status: 'error'; errors?: ContactErrors; message?: string }
+type State = { status: 'idle' } | { status: 'ready'; href: string } | { status: 'error'; errors: ContactErrors }
 
 /**
- * The inquiry form. Every piece of surrounding copy arrives pre-rendered from
- * the server section, so no Portable Text crosses the boundary; the field
- * labels are the one thing fixed here.
+ * The inquiry form. It gathers the brief, then composes a `mailto:` and opens
+ * the visitor's own mail app; nothing is sent from here and there is no server.
  *
- * `?service=ux|video|both` preselects the service so the buttons on the service
- * cards land the visitor on a form that already knows what they want. It is
- * read from `location` after mount rather than with `useSearchParams`: that
- * hook would force a Suspense boundary whose server-rendered fallback is an
- * unhydrated copy of this form, and a fast visitor could submit it natively.
+ * Every piece of surrounding copy arrives pre-rendered from the server section,
+ * so no Portable Text crosses the boundary. `?service=ux|video|both` preselects
+ * the service, read from `location` after mount.
  *
- * Native `required` and `type="email"` are the first line; the API route is the
- * authority and its field errors are rendered beside the fields they name, with
- * a summary that takes focus so a keyboard or screen-reader user hears it.
+ * Validation errors render beside the fields they name, with a summary that
+ * takes focus so a keyboard or screen-reader user hears it.
  */
 export function ContactForm({
+  email,
+  schedule,
   timingOptions = [],
   budgetOptions = [],
   successHeading,
   success,
-  errorFallback,
   emailNote,
 }: {
+  email: string
+  schedule?: { label: string; href: string }
   timingOptions?: string[]
   budgetOptions?: string[]
   successHeading: string
   success: ReactNode
-  errorFallback: ReactNode
   emailNote: ReactNode
 }) {
   const uid = useId()
   const formRef = useRef<HTMLFormElement>(null)
-  // When the form mounted, for the server's time trap. A ref rather than state:
-  // nothing renders from it, it just rides along with the submission.
-  const startedAt = useRef(0)
   const summaryRef = useRef<HTMLDivElement>(null)
-  const successRef = useRef<HTMLHeadingElement>(null)
+  const readyRef = useRef<HTMLHeadingElement>(null)
+  const [state, setState] = useState<State>({ status: 'idle' })
 
   useEffect(() => {
-    startedAt.current = Date.now()
     const preset = new URLSearchParams(window.location.search).get('service')
     if (isServiceKey(preset)) {
       const radio = formRef.current?.querySelector<HTMLInputElement>(`input[name="service"][value="${preset}"]`)
@@ -55,49 +47,58 @@ export function ContactForm({
     }
   }, [])
 
-  const [state, setState] = useState<State>({ status: 'idle' })
-  const [pending, startTransition] = useTransition()
-
-  // `onSubmit` rather than a form `action`: React resets uncontrolled fields
-  // after an action runs, which would wipe the visitor's brief on a validation
-  // error. Native constraint validation still runs before this fires.
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const payload = { ...Object.fromEntries(new FormData(e.currentTarget).entries()), startedAt: startedAt.current }
-    startTransition(async () => {
-      try {
-        const res = await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
-        const json = (await res.json().catch(() => ({}))) as { ok?: boolean; errors?: ContactErrors; message?: string }
-        if (res.ok && json.ok) setState({ status: 'success' })
-        else setState({ status: 'error', errors: json.errors, message: json.message })
-      } catch {
-        setState({ status: 'error' })
-      }
-    })
-  }
-
   useEffect(() => {
     if (state.status === 'error') summaryRef.current?.focus()
-    if (state.status === 'success') successRef.current?.focus()
+    if (state.status === 'ready') readyRef.current?.focus()
   }, [state])
 
-  if (state.status === 'success') {
+  // `onSubmit` rather than a form `action`: React resets uncontrolled fields
+  // after an action runs, which would wipe the brief on a validation error.
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const result = validate(Object.fromEntries(new FormData(e.currentTarget).entries()))
+    if (!result.ok) {
+      setState({ status: 'error', errors: result.errors })
+      return
+    }
+    const href = buildMailto(email, result.data)
+    setState({ status: 'ready', href })
+    window.location.href = href
+  }
+
+  if (state.status === 'ready') {
     return (
       <div role="status" className="surface-tint flex flex-col gap-stack p-8 md:p-10">
-        <h2 ref={successRef} tabIndex={-1} className="font-display text-title-dense text-ink focus:outline-none">
+        <h2 ref={readyRef} tabIndex={-1} className="font-display text-title-dense text-ink focus:outline-none">
           {successHeading}
         </h2>
         <div className="flex flex-col gap-stack text-text">{success}</div>
+        <div className="flex flex-wrap items-center gap-4">
+          <a
+            href={state.href}
+            className="inline-flex items-center rounded-full border border-accent bg-accent px-5 py-2.5 text-body font-medium text-white transition-colors duration-[--duration-sm] can-hover:hover:bg-ink can-hover:hover:border-ink"
+          >
+            Open the email again
+          </a>
+          {schedule && (
+            <a
+              href={schedule.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-body text-ink underline decoration-pop decoration-[2px] underline-offset-4 transition-colors can-hover:hover:text-accent"
+            >
+              {schedule.label}
+              <span aria-hidden> ↗</span>
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          )}
+        </div>
         <div className="text-[0.9375rem] text-muted">{emailNote}</div>
       </div>
     )
   }
 
-  const errors = state.status === 'error' ? (state.errors ?? {}) : {}
+  const errors = state.status === 'error' ? state.errors : {}
   const errorList = Object.entries(errors)
   const field = (name: keyof ContactErrors) => ({
     id: `${uid}-${name}`,
@@ -124,25 +125,16 @@ export function ContactForm({
           role="alert"
           className="flex flex-col gap-2 rounded-md border border-accent/40 bg-accent/5 p-4 focus:outline-none"
         >
-          {errorList.length ? (
-            <>
-              <p className="font-medium text-ink">Please check {errorList.length === 1 ? 'one field' : `${errorList.length} fields`}:</p>
-              <ul className="flex flex-col gap-1 text-[0.9375rem] text-text">
-                {errorList.map(([name, message]) => (
-                  <li key={name}>
-                    <a href={`#${uid}-${name}`} className="underline underline-offset-2">
-                      {message}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <div className="flex flex-col gap-2 text-text">
-              {state.message && <p className="font-medium text-ink">{state.message}</p>}
-              {errorFallback}
-            </div>
-          )}
+          <p className="font-medium text-ink">Please check {errorList.length === 1 ? 'one field' : `${errorList.length} fields`}:</p>
+          <ul className="flex flex-col gap-1 text-[0.9375rem] text-text">
+            {errorList.map(([name, message]) => (
+              <li key={name}>
+                <a href={`#${uid}-${name}`} className="underline underline-offset-2">
+                  {message}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
@@ -155,20 +147,12 @@ export function ContactForm({
           {fieldError('name')}
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor={`${uid}-email`} className={labelClass}>
-            Email
+          <label htmlFor={`${uid}-company`} className={labelClass}>
+            Company or project name <span className="font-normal text-muted">(optional)</span>
           </label>
-          <input {...field('email')} type="email" required autoComplete="email" className={inputClass} />
-          {fieldError('email')}
+          <input {...field('company')} type="text" autoComplete="organization" className={inputClass} />
+          {fieldError('company')}
         </div>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <label htmlFor={`${uid}-company`} className={labelClass}>
-          Company or project name <span className="font-normal text-muted">(optional)</span>
-        </label>
-        <input {...field('company')} type="text" autoComplete="organization" className={inputClass} />
-        {fieldError('company')}
       </div>
 
       <fieldset className="flex flex-col gap-3" aria-describedby={errors.service ? `${uid}-service-error` : undefined}>
@@ -179,13 +163,7 @@ export function ContactForm({
               key={s.value}
               className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-rule bg-surface px-4 text-[0.9375rem] text-ink has-[:checked]:border-ink has-[:checked]:bg-ink has-[:checked]:text-bg"
             >
-              <input
-                type="radio"
-                name="service"
-                value={s.value}
-                required
-                className="size-4 accent-accent"
-              />
+              <input type="radio" name="service" value={s.value} required className="size-4 accent-accent" />
               {s.label}
             </label>
           ))}
@@ -252,22 +230,26 @@ export function ContactForm({
         {fieldError('links')}
       </div>
 
-      {/* Honeypot: off-screen, unlabeled for humans, ignored by the browser's
-          autofill. A filled value drops the submission silently on the server. */}
-      <div aria-hidden className="absolute -left-[9999px] top-auto h-px w-px overflow-hidden">
-        <label htmlFor={`${uid}-website`}>Website</label>
-        <input id={`${uid}-website`} name="website" type="text" tabIndex={-1} autoComplete="off" />
-      </div>
-
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
         <button
           type="submit"
-          disabled={pending}
-          className="inline-flex items-center rounded-full border border-accent bg-accent px-6 py-3 text-body font-medium text-white shadow-sm transition-[background-color,transform] duration-[--duration-sm] disabled:opacity-60 can-hover:hover:-translate-y-px can-hover:hover:bg-ink can-hover:hover:border-ink"
+          className="inline-flex items-center rounded-full border border-accent bg-accent px-6 py-3 text-body font-medium text-white shadow-sm transition-[background-color,transform] duration-[--duration-sm] can-hover:hover:-translate-y-px can-hover:hover:bg-ink can-hover:hover:border-ink"
         >
-          {pending ? 'Sending' : 'Send the brief'}
+          Open in my mail app
         </button>
-        <div className="text-[0.9375rem] text-muted">{emailNote}</div>
+        {schedule && (
+          <a
+            href={schedule.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-body text-ink underline decoration-pop decoration-[2px] underline-offset-4 transition-colors can-hover:hover:text-accent"
+          >
+            {schedule.label}
+            <span aria-hidden> ↗</span>
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
+        )}
+        <div className="basis-full text-[0.9375rem] text-muted">{emailNote}</div>
       </div>
     </form>
   )

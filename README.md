@@ -1,6 +1,6 @@
 # angelikacheng.com
 
-Angelika Cheng's creative brand and services site: UX & product design and creative video production, with selected work, original experiments, and a project inquiry form.
+Angelika Cheng's creative brand and services site: UX & product design and creative video production, with selected work, original experiments, and a project inquiry form that composes an email.
 
 The detailed UX career portfolio for hiring managers lives separately at [angelikaux.com](https://angelikaux.com); this site links to it from the footer.
 
@@ -8,7 +8,7 @@ The detailed UX career portfolio for hiring managers lives separately at [angeli
 
 - **Next.js 16** (App Router, React 19) with **Tailwind v4** design tokens in `src/app/globals.css`
 - **Sanity 6** for content, embedded Studio at `/studio`, live content via `next-sanity`, draft preview through the Presentation tool
-- **Resend** for the contact form (`/api/contact`)
+- No form backend: the contact form builds a `mailto:` and opens the visitor's mail app
 - **Playwright + axe** for accessibility, keyboard, mobile, reduced-motion and copy checks
 
 ## Getting started
@@ -29,10 +29,6 @@ npm run dev
 | `SANITY_API_WRITE_TOKEN` | Editor token: used by `npm run seed` and server reads of drafts |
 | `SANITY_API_READ_TOKEN` | Viewer token: handed to the browser for draft-mode live preview |
 | `SANITY_REVALIDATE_SECRET` | Shared secret for the Sanity → `/api/revalidate` webhook |
-| `RESEND_API_KEY` | Resend API key for the contact form |
-| `CONTACT_TO` | Inbox that receives inquiries (defaults to `hello@angelikacheng.com`) |
-| `CONTACT_FROM` | Sender. Use `onboarding@resend.dev` until the domain is verified in Resend |
-| `CONTACT_DRY_RUN` | Set to `1` to log submissions instead of sending (used by the test suite) |
 
 The dataset is public, so the site renders without tokens. Tokens are only needed for seeding, draft preview and the revalidate webhook.
 
@@ -61,7 +57,6 @@ VERIFY_URL=https://angelikacheng.com npm run verify   # against a deployment
 1. `vercel link` to a new Vercel project and add the env vars above (Production + Preview).
 2. Add `angelikacheng.com` (and a `www` redirect) as the domain.
 3. In Sanity: add the production and preview origins under CORS (with credentials), and create a webhook to `https://angelikacheng.com/api/revalidate` for `_type in ["page", "project", "service", "siteSettings", "navigation"]` using `SANITY_REVALIDATE_SECRET`.
-4. In Resend: verify the domain, then set `CONTACT_FROM` to an address on it.
 
 ## Conventions
 

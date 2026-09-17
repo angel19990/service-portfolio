@@ -31,10 +31,10 @@ export const sectionCta = defineType({
     }),
     defineField({
       name: 'showEmail',
-      title: 'Show the email address',
+      title: 'Show email and call links',
       type: 'boolean',
       initialValue: false,
-      description: 'Adds the site email beneath the buttons as the no-form alternative.',
+      description: 'Adds the site email and the schedule-a-call link beside the buttons.',
     }),
   ],
   preview: sectionPreview('Call to action'),

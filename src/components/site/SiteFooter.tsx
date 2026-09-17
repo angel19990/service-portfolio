@@ -6,9 +6,9 @@ import type { CtaLink } from '@/sanity/types'
 const isExternal = (href: string) => /^(https?:|mailto:|tel:)/.test(href)
 
 /**
- * Three rows: the wordmark with the email beside it, the site and social
- * links, and the one line for recruiters that sends them to the career
- * portfolio on its own domain.
+ * Three rows: the wordmark with the email and the call link beside it, the
+ * site and social links, and the one line for recruiters that sends them to
+ * the career portfolio on its own domain.
  */
 export function SiteFooter({
   items,
@@ -16,6 +16,7 @@ export function SiteFooter({
   wordmark,
   email,
   location,
+  scheduleLink,
   careerPortfolio,
 }: {
   items: NavItem[]
@@ -23,6 +24,7 @@ export function SiteFooter({
   wordmark?: string
   email?: string
   location?: string
+  scheduleLink?: CtaLink
   careerPortfolio?: CtaLink
 }) {
   /* `-my-1.5 py-1.5` is a hit area: the label tier renders a 13px line box and
@@ -54,6 +56,18 @@ export function SiteFooter({
                 className="font-display text-h2 text-ink underline decoration-pop decoration-[3px] underline-offset-[6px] transition-colors can-hover:hover:text-accent"
               >
                 {email}
+              </a>
+            )}
+            {scheduleLink?.href && (
+              <a
+                href={scheduleLink.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-body text-ink underline decoration-rule underline-offset-4 transition-colors can-hover:hover:text-accent can-hover:hover:decoration-accent"
+              >
+                {scheduleLink.label}
+                <span aria-hidden> ↗</span>
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
             )}
             {location && <p className="text-label uppercase text-muted lg:ml-auto">{location}</p>}
