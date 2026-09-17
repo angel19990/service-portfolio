@@ -17,26 +17,26 @@ export interface SectionHeroData {
 }
 
 /**
- * The home opener. Copy on the left; on the right, one example of each offer
- * side by side so both are apparent without reading a word past the headline.
- * The video example gets a coral tag and the UX one a marigold tag, which is
- * the only place the two offers take different colours.
+ * The home opener, laid out like the angelikaux.com cover: the headline and
+ * copy on the left, the work on the right. Here the right side holds one
+ * example of each offer so both are apparent without reading past the
+ * headline; each carries a small uppercase label.
  */
 export function SectionHero({ data, index = 0 }: { data: SectionHeroData; index?: number }) {
   const examples = [
-    { key: 'a', media: data.mediaA, label: data.mediaALabel, tag: 'bg-pop text-ink' },
-    { key: 'b', media: data.mediaB, label: data.mediaBLabel, tag: 'bg-coral text-ink' },
+    { key: 'a', media: data.mediaA, label: data.mediaALabel },
+    { key: 'b', media: data.mediaB, label: data.mediaBLabel },
   ]
   const hasExamples = examples.some((e) => e.media?.length || e.label)
 
   return (
     <section id={data.id} className="px-gutter pb-section">
       <Reveal index={index} variant="up" className="mx-auto w-full max-w-content">
-        <div className={`grid items-center gap-band ${hasExamples ? 'lg:grid-cols-[1.1fr_1fr]' : ''}`}>
+        <div className={`grid items-center gap-band ${hasExamples ? 'lg:grid-cols-[1.6fr_1fr]' : ''}`}>
           <div className="flex flex-col gap-stack">
             {data.eyebrow && <Eyebrow>{data.eyebrow}</Eyebrow>}
             {data.heading && <Heading value={data.heading} tier="display" />}
-            {data.body && <RichText value={data.body} className="text-[1.125rem] md:text-[1.25rem]" />}
+            {data.body && <RichText value={data.body} />}
             {data.ctas && data.ctas.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-3">
                 {data.ctas.map((cta) => (
@@ -62,11 +62,7 @@ export function SectionHero({ data, index = 0 }: { data: SectionHeroData; index?
                   ) : (
                     <div className="media-empty aspect-[4/5]" aria-hidden />
                   )}
-                  {ex.label && (
-                    <span className={`self-start rounded-full px-3 py-1 text-label uppercase ${ex.tag}`}>
-                      {ex.label}
-                    </span>
-                  )}
+                  {ex.label && <span className="text-label uppercase text-muted">{ex.label}</span>}
                 </li>
               ))}
             </ul>

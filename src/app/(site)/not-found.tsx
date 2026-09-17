@@ -13,13 +13,13 @@ export default function NotFound() {
         <div className="mt-2 flex flex-wrap gap-3">
           <Link
             href="/work"
-            className="inline-flex items-center rounded-full border border-accent bg-accent px-5 py-2.5 text-body font-medium text-white transition-colors duration-[--duration-sm] can-hover:hover:bg-ink can-hover:hover:border-ink"
+            className="inline-flex items-center rounded-full border border-accent/55 bg-[linear-gradient(180deg,rgb(240_107_37/0.95),rgb(227_97_30/0.95))] px-4 py-2.5 text-body text-ink shadow-sm transition-[transform,box-shadow] duration-[--duration-sm] can-hover:hover:-translate-y-px"
           >
             See the work
           </Link>
           <Link
             href="/contact"
-            className="inline-flex items-center rounded-full border border-ink/25 px-5 py-2.5 text-body font-medium text-ink transition-colors duration-[--duration-sm] can-hover:hover:border-accent can-hover:hover:bg-accent can-hover:hover:text-white"
+            className="inline-flex items-center rounded-full border border-accent/55 bg-white/60 px-4 py-2.5 text-body text-ink shadow-xs transition-colors duration-[--duration-sm] can-hover:hover:border-accent can-hover:hover:bg-accent"
           >
             Start a project
           </Link>

@@ -1,60 +1,74 @@
 @import "tailwindcss";
 
 /*
- * Design tokens: color/*, type/size/*, space/*, radius/*, motion/*.
+ * Design tokens. Names mirror the Figma variable collections 1:1 —
+ * color/*, type/size/*, space/*, radius/*, motion/* — so the handoff is a
+ * rename-free mapping and the two stay in step.
  *
  * The type and space ramps are fluid clamp() anchored at 375 and 1440, one token
  * per tier, rather than per-breakpoint overrides. Three sets of numbers to
  * maintain would guarantee drift, and the ~1024 dead zone always looks wrong.
+ * Figma carries the same ramp as three modes whose tablet values are the numbers
+ * these clamps actually compute at 768px, so the two agree by construction.
  */
 @custom-variant can-hover (@media (hover: hover) and (pointer: fine));
 @custom-variant touch (@media (hover: none));
 
 @theme {
   /* ---------- color ---------- */
-  /* Warm paper, not cool grey. Every text colour below clears 4.5:1 on `bg`,
-     `surface` and `tint`, so the test suite carries no contrast allowlist. A
-     colour pair is only ever a ratio with its neighbour: move `bg` or `tint`
-     and re-run `npm run verify:survey` before trusting any of these again. */
-  --color-bg: #faf7f2;
+  /* Cool, not warm. Every ratio measured against the ground moved with it
+     (gotcha 27): #f6f8fa is three points darker than the #fcfbf8 it replaces, so
+     contrast against it dropped ~2.8% across the board. `muted` went 4.68 → 4.55:1
+     and is now the thinnest margin in the palette — it cannot absorb another
+     darkening of this token without being re-tuned first. */
+  --color-bg: #f6f8fa;
   --color-surface: #ffffff;
-  --color-tint: #f3eee6;
-  --color-ink: #1c1917;
-  --color-text: #3a3632;
-  /* Eyebrows, labels, meta. 5.39:1 on bg, 4.99:1 on tint. */
-  --color-muted: #6b655d;
-  /* Terracotta. Text-safe: 5.60:1 on bg, and white on it is 5.98:1, so it can
-     carry links, accent marks and the filled button without a second token. */
-  --color-accent: #b4380d;
-  /* Marigold. Fills, underlines and the dot in the wordmark only; never text on
-     a light ground (1.6:1). Ink on it is 11:1, so it works as a highlight
-     behind dark text and as text on the ink band. */
-  --color-pop: #f9c74f;
-  /* Coral. The video side's decoration: hover washes, small fills. Never text. */
-  --color-coral: #ff8a5b;
-  --color-rule: rgb(28 25 23 / 0.12);
-  --color-rule-soft: rgb(28 25 23 / 0.06);
-  --color-scrim: rgb(28 25 23 / 0.6);
+  --color-ink: #141312;
+  --color-text: #2a2927;
+  /* Was #8a847b at 3.61:1 on --color-bg, which fails AA for the small uppercase
+     text this carries — eyebrows, nav links, teaser labels, footer.
+
+     Then #79746c, which reached 4.52:1 against the *old* #fdfcfa ground. The
+     design pass darkened `bg` to #fcfbf8 and put a gradient behind it, and that
+     silently took the same grey to 4.48:1 — under AA, on 33 label nodes across
+     four routes, with nothing in the tokens changed to say so. #767169 clears
+     4.5 against both the flat token (4.68:1) and the gradient's darkest point
+     #f9f7f2 (4.52:1), so the next small move in the ground does not repeat it. */
+  --color-muted: #767169;
+  /* 2.06:1, and reaching AA would take it to #78746d — indistinguishable from
+     `muted` above, which is the whole point of having a second tier. Kept, and
+     recorded as an accepted tradeoff alongside the accent. Used only for the
+     de-emphasised year beside a client name. */
+  --color-muted-2: #b3aca1;
+  --color-accent: #f06b25;
+  --color-rule: rgb(20 19 18 / 0.12);
+  --color-rule-soft: rgb(20 19 18 / 0.06);
+  --color-scrim: rgb(20 19 18 / 0.55);
 
   /* ---------- font ---------- */
-  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-prata), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
   /* ---------- type ramp: 375 → 1440 ---------- */
   /* 40 → 58.4 → 90 */
   --text-display: clamp(2.5rem, 1.5317rem + 4.1315vw, 5.25rem);
-  --text-display--line-height: 1.02;
+  --text-display--line-height: 1.04;
   --text-display--letter-spacing: -0.02em;
+
+  /* 48 → 74.6 → 120 */
+  --text-title-cover: clamp(3rem, 1.6796rem + 5.6338vw, 6.75rem);
+  --text-title-cover--line-height: 1.06;
+  --text-title-cover--letter-spacing: -0.025em;
 
   /* 34 → 45.1 → 64 */
   --text-title: clamp(2rem, 1.4718rem + 2.2535vw, 3.5rem);
-  --text-title--line-height: 1.08;
+  --text-title--line-height: 1.12;
   --text-title--letter-spacing: -0.015em;
 
   /* 28 → 33.2 → 42 */
   --text-title-dense: clamp(1.6875rem, 1.4014rem + 1.2207vw, 2.5rem);
-  --text-title-dense--line-height: 1.16;
-  --text-title-dense--letter-spacing: -0.01em;
+  --text-title-dense--line-height: 1.18;
+  --text-title-dense--letter-spacing: -0.012em;
 
   /* 21 → 22.8 → 26 */
   --text-h2: clamp(1.25rem, 1.1399rem + 0.4695vw, 1.5625rem);
@@ -67,57 +81,68 @@
   /* 12 → 13.1 → 15 */
   --text-eyebrow: clamp(0.75rem, 0.684rem + 0.2817vw, 0.9375rem);
   --text-eyebrow--line-height: 1.2;
-  --text-eyebrow--letter-spacing: 0.18em;
+  --text-eyebrow--letter-spacing: 0.28em;
   --text-eyebrow--font-weight: 600;
 
-  /* fixed: 11px is the floor for a tracked label */
+  /* fixed — 11px is already the floor for a 0.2em tracked label */
   --text-label: 0.6875rem;
   --text-label--line-height: 1.2;
-  --text-label--letter-spacing: 0.16em;
+  --text-label--letter-spacing: 0.2em;
   --text-label--font-weight: 600;
 
-  /* ---------- layout space ---------- */
+  /* ---------- layout space (the scale the deck never had) ---------- */
   --spacing-gutter: clamp(1.25rem, -0.4225rem + 7.1362vw, 6rem); /* 20 → 96 */
   --spacing-section: clamp(4rem, 1.8873rem + 9.0141vw, 10rem); /* 64 → 160 */
-  /* `band`, not `block`: every `--spacing-X` token also generates an `inline-X`
-     utility, and a token named `block` mints a second `.inline-block` rule that
-     sets `inline-size`. Do not name a spacing token block, flex, grid or table. */
+  /* `band`, not `block` — the name is load-bearing. Every `--spacing-X` token
+     also generates an `inline-X` utility for `inline-size`, so `--spacing-block`
+     minted a second `.inline-block` rule that set `inline-size: 32px/64px`. It
+     landed on top of the real display utility, and every `inline-block` element
+     on the site silently got a hardcoded width: the wordmark rendered a 32px box
+     around 127px of `nowrap` text, which is why it overlapped the footer links.
+     Do not name a spacing token `block`, `flex`, `grid`, or `table`. */
   --spacing-band: clamp(2rem, 1.2958rem + 3.0047vw, 4rem); /* 32 → 64 */
   --spacing-stack: clamp(1rem, 0.8239rem + 0.7512vw, 1.5rem); /* 16 → 24 */
-  /* The first band clears the sticky nav. 56 → 80 → 120. */
+  /* The first band clears the sticky nav. Smaller than `section` on purpose —
+     the nav already supplies 55–67px of visual air above it. 56 → 80 → 120. */
   --spacing-page-top: clamp(3.5rem, 2.0915rem + 6.0094vw, 7.5rem);
 
-  /* The 1248px content column. */
+  /* The 1248px content column the frames are drawn against, so the layout stops
+     growing past the widest frame instead of sprawling on a 27" display. */
   --container-content: 78rem;
 
-  /* ---------- radius ---------- */
-  --radius-xs: 0.25rem;
-  --radius-sm: 0.375rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 0.875rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.75rem;
+  /* ---------- radius: 13 hardcoded source values → 7 ---------- */
+  --radius-xs: 0.25rem; /* 4 — absorbs 3 */
+  --radius-sm: 0.375rem; /* 6 */
+  --radius-md: 0.5rem; /* 8 — the default; 38 uses in the source */
+  --radius-lg: 0.625rem; /* 10 — absorbs 12 */
+  --radius-xl: 0.875rem; /* 14 — absorbs 16 */
+  --radius-2xl: 1.125rem; /* 18 */
   --radius-full: 9999px;
 
-  /* ---------- shadow ---------- */
-  --shadow-xs: 0 6px 16px -12px rgb(28 25 23 / 0.16);
-  --shadow-sm: 0 14px 32px -24px rgb(28 25 23 / 0.16);
-  --shadow-md: 0 16px 36px -24px rgb(28 25 23 / 0.18), 0 1px 3px rgb(28 25 23 / 0.05);
-  --shadow-lg: 0 24px 54px -28px rgb(28 25 23 / 0.18), 0 4px 12px rgb(28 25 23 / 0.06);
-  --shadow-xl: 0 36px 88px -28px rgb(28 25 23 / 0.28), 0 0 0 1px rgb(255 255 255 / 0.12);
+  /* ---------- shadow: 13 → 5 ---------- */
+  --shadow-xs: 0 6px 16px -12px rgb(20 19 18 / 0.16);
+  --shadow-sm: 0 14px 32px -24px rgb(20 19 18 / 0.16);
+  --shadow-md: 0 16px 36px -24px rgb(20 19 18 / 0.18), 0 1px 3px rgb(20 19 18 / 0.05);
+  --shadow-lg: 0 24px 54px -28px rgb(20 19 18 / 0.18), 0 4px 12px rgb(20 19 18 / 0.06);
+  --shadow-xl: 0 36px 88px -28px rgb(20 19 18 / 0.28), 0 0 0 1px rgb(255 255 255 / 0.12);
 
   /* ---------- motion ---------- */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  /* An overshooting curve puts a small pop past the target without a keyframe
-     per element, which is what lets the entrance be a reversible transition. */
+  /* The deck's pop, as an easing rather than a keyframe. `evoPanelPop` ran
+     0.9 → 1.04 → 1; an overshooting curve puts the same 4% past the target
+     without needing a @keyframes per element, which is what lets the entrance
+     be a transition and therefore reversible. */
   --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
   --duration-sm: 180ms;
   --duration-md: 420ms;
   --duration-lg: 720ms;
+  /* Hero only. The deck's cover ran its vectors at 1150–1400ms; anything on the
+     `lg` step reads as a flick at that travel distance. */
+  --duration-xl: 1100ms;
 
   /* ---------- breakpoints ---------- */
   --breakpoint-md: 48rem; /* 768 */
-  --breakpoint-lg: 64rem; /* 1024: the header goes inline */
+  --breakpoint-lg: 64rem; /* 1024 */
   --breakpoint-xl: 80rem; /* 1280 */
 }
 
@@ -127,8 +152,8 @@
     --motion-step: 70ms;
     /* How small an element starts before it pops back to 1. */
     --motion-pop: 0.965;
-    /* Two rings: a bg-coloured spread, then accent. A plain outline is
-       illegible against the paper at several of the places focus lands. */
+    /* Two rings: a bg-coloured spread, then accent. A plain outline is illegible
+       against #fdfcfa at several of the places focus actually lands. */
     --ring-focus: 0 0 0 3px var(--color-bg), 0 0 0 5px var(--color-accent);
   }
 
@@ -147,38 +172,46 @@
     scrollbar-gutter: stable;
   }
 
-  /* One flat ground. Depth comes from cards and shadows, not gradients, which
-     also keeps every contrast ratio a single number. */
+  /*
+   * One flat ground, deliberately.
+   *
+   * Session 3 layered four gradients here — a white bloom at top-right, a white
+   * fade over the first 12rem, and a warm settle to #f9f7f2 at the fold. The
+   * effect reads as banding rather than depth: the top of every page looks
+   * white, the bottom looks warm, and the bloom sits exactly behind the hero
+   * media column, which is the "gradient behind the hero images".
+   *
+   * Flattening is also the safe direction for contrast (gotcha 27). `--color-muted`
+   * measured 4.52:1 against the gradient's darkest point and 4.68:1 against the
+   * flat token, so removing the drift moves every ratio up, not down. Card and
+   * media depth now comes entirely from shadow, which is where it belonged.
+   */
   body {
     background: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-sans);
     font-size: var(--text-body);
-    line-height: 1.58;
-    font-weight: 400;
+    line-height: 1.55;
+    font-weight: 300;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
   }
 
-  /* Fraunces is a variable optical-size serif; a little softness and the
-     "wonky" alternates give the display tier its character. */
-  .font-display {
-    font-weight: 500;
-    font-variation-settings: "SOFT" 40, "WONK" 0;
-  }
-  .font-display em,
-  .font-display .italic {
-    font-variation-settings: "SOFT" 80, "WONK" 1;
+  /* Inter 300 goes thin below ~18px against the ground. */
+  @media (width < 48rem) {
+    body {
+      font-weight: 400;
+    }
   }
 
-  :where(a, button, [tabindex], summary, input, select, textarea):focus-visible {
+  :where(a, button, [tabindex], summary):focus-visible {
     outline: none;
     box-shadow: var(--ring-focus);
     border-radius: var(--radius-xs);
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--color-pop) 55%, transparent);
+    background: color-mix(in srgb, var(--color-accent) 22%, transparent);
   }
 
   :where(a, button) {
@@ -211,14 +244,24 @@
 
 @layer utilities {
   /* Scroll-triggered entrance. One shared IntersectionObserver toggles
-     data-revealed; the index staggers via --reveal-i. A transition, not an
-     animation, because the observer is two-way: the hidden state has to be a
-     place the element can travel back to. */
+     data-revealed; the index staggers via --reveal-i. Replaces the deck's
+     stampSlideAnimationOrder() whitelist entirely, because JSX order is order.
+
+     A transition, not an animation, because the observer is two-way: the hidden
+     state has to be a place the element can travel back to. Offset and scale
+     compose into one transform through two custom properties, so a variant only
+     has to say which axis it moves on. */
   [data-reveal] {
     --reveal-x: 0px;
     --reveal-y: var(--motion-shift);
     opacity: 0;
+    /* translate3d, not translate: the z keeps the element on its own compositor
+       layer for the length of the transition without a standing `will-change`.
+       A permanent one promotes every band on the page at once, which is a lot of
+       retained texture for an effect that runs for 700ms. */
     transform: translate3d(var(--reveal-x), var(--reveal-y), 0) scale(var(--motion-pop));
+    /* Leaving is faster and undelayed — the stagger is an entrance effect, and
+       replaying it in reverse behind the reader just looks like lag. */
     transition:
       opacity var(--duration-md) var(--ease-out-expo),
       transform var(--duration-md) var(--ease-out-expo);
@@ -243,11 +286,11 @@
     transition-delay: calc(min(var(--reveal-i, 0), 6) * var(--motion-step));
   }
 
-  /* Horizontal rails: the filter strip on narrow screens. */
+  /* Horizontal rails: the tab strip at ≤768, the discipline chips at 375. */
   .rail-x {
     display: flex;
     overflow-x: auto;
-    scroll-snap-type: x proximity;
+    scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
@@ -256,31 +299,28 @@
   }
   .rail-x > * {
     flex: 0 0 auto;
-    scroll-snap-align: start;
+    scroll-snap-align: center;
   }
 
   /*
-   * The sticky header. The ground as literal RGBA: a translucent bar has to
-   * composite against the same colour the page is. Move `--color-bg` and this
-   * moves with it or the chrome reads as a mis-tinted bar.
+   * No border. Its only consumer is the sticky header, which states its own
+   * `border-b` — and the 1px this used to put on all four sides pushed the
+   * header's inner column one pixel right of the body's, which is exactly the
+   * kind of misalignment nobody can name but everybody sees.
    */
   .surface-glass {
-    background: rgb(250 247 242 / 0.88);
+    /* The ground as literal RGBA — a translucent bar has to composite against
+       the same colour the page is, and `var()` inside `rgb()` with an alpha is
+       not that. Move `--color-bg` and this, `SiteHeader`'s sheet and
+       `SiteFooter` move with it or the chrome reads as three mis-tinted bars. */
+    background: rgb(246 248 250 / 0.9);
     box-shadow: var(--shadow-xs);
     backdrop-filter: blur(16px) saturate(100%);
   }
 
-  /*
-   * Raw CSS for surfaces and media, and for a reason worth writing down: the
-   * `shadow-*` and `rounded-[--var]` utilities do not work in this project.
-   * `--shadow-md` reaches `--tw-shadow` but the composed `box-shadow` never
-   * lands, and Tailwind v4 dropped the bare `[--var]` shorthand. Every shadow
-   * you can see on this site comes from one of these rules.
-   */
   .surface-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-rule-soft);
-    border-radius: var(--radius-2xl);
+    background: rgb(255 255 255 / 0.9);
+    border: 1px solid rgb(255 255 255 / 0.74);
     box-shadow: var(--shadow-md);
   }
 
@@ -289,35 +329,38 @@
     box-shadow: var(--shadow-lg);
   }
 
-  .surface-tint {
-    background: var(--color-tint);
-    border-radius: var(--radius-2xl);
+  /*
+   * A framed plate: white fill, white hairline, radius and shadow. Correct where
+   * the media is *composed into* the page — the hero stack's layers, whose whole
+   * effect is objects overlapping on a ground.
+   */
+  .media-frame {
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 0.72);
+    border-radius: var(--radius-xl);
+    background: rgb(255 255 255 / 0.88);
+    box-shadow: var(--shadow-md);
   }
 
-  /* The dark closing band. Text tokens invert inside it. */
-  .band-ink {
-    background: var(--color-ink);
-    color: var(--color-bg);
-    border-radius: var(--radius-2xl);
-  }
-  .band-ink :where(h1, h2, h3, p) {
-    color: var(--color-bg);
-  }
-  .band-ink .text-muted {
-    color: rgb(250 247 242 / 0.72);
-  }
-
-  /* Supporting media: its own shape, rounded, with a shadow. */
+  /*
+   * The same radius and shadow with no plate and no border — for supporting
+   * media, which is everything inside a case study.
+   *
+   * `.media-frame` was applied to all of it, and paired with a hardcoded 4:3 box
+   * it turned a 886×1920 clip into a thin strip floating in a white card. The
+   * card was the thing being seen, not the work. Here the media is its own shape
+   * and the rounding follows it.
+   */
   .media-fit {
     overflow: hidden;
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-md);
   }
 
-  /* An empty media slot: the same shape, a tint, and nothing to say. */
+  /* An empty media slot: the same shape, a soft wash, and nothing to say. */
   .media-empty {
     border-radius: var(--radius-xl);
-    background: var(--color-tint);
+    background: rgb(20 19 18 / 0.04);
     border: 1px dashed var(--color-rule);
   }
 
@@ -331,11 +374,5 @@
   .project-grid[data-filter="video"] > [data-category]:not([data-category="video"]),
   .project-grid[data-filter="experiment"] > [data-category]:not([data-category="experiment"]) {
     display: none;
-  }
-
-  /* A marigold highlight behind a word: the one place `pop` touches text. */
-  .highlight-pop {
-    background-image: linear-gradient(transparent 62%, var(--color-pop) 62%, var(--color-pop) 92%, transparent 92%);
-    padding-inline: 0.04em;
   }
 }

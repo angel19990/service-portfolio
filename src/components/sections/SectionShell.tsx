@@ -25,7 +25,7 @@ export function SectionShell({
   id?: string
   eyebrow?: string
   heading?: RichHeading
-  headingTier?: 'display' | 'title' | 'title-dense' | 'h2'
+  headingTier?: 'display' | 'title-cover' | 'title' | 'title-dense' | 'h2'
   index?: number
   children?: ReactNode
   className?: string

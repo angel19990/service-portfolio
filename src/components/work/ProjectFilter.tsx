@@ -21,7 +21,7 @@ const isFilter = (v: string | null): v is Filter => FILTERS.some((f) => f.value 
  * static, deep links work, and with JavaScript off every card simply shows.
  *
  * Links rather than buttons so each filter has a URL to share and the browser's
- * back button walks through them.
+ * back button walks through them. The pills are the site's outline button.
  */
 export function ProjectFilter({ children }: { children: ReactNode }) {
   const params = useSearchParams()
@@ -48,10 +48,10 @@ export function ProjectFilter({ children }: { children: ReactNode }) {
                   href={f.value === 'all' ? '/work' : `/work?filter=${f.value}`}
                   scroll={false}
                   aria-current={on ? 'true' : undefined}
-                  className={`inline-flex min-h-11 items-center rounded-full border px-4 text-[0.9375rem] font-medium transition-colors duration-[--duration-sm] ${
+                  className={`inline-flex min-h-11 items-center rounded-full border px-4 text-[0.9375rem] transition-colors duration-[--duration-sm] ${
                     on
-                      ? 'border-ink bg-ink text-bg'
-                      : 'border-rule bg-surface text-ink can-hover:hover:border-accent can-hover:hover:text-accent'
+                      ? 'border-accent bg-accent text-ink'
+                      : 'border-accent/55 bg-white/60 text-ink can-hover:hover:border-accent can-hover:hover:bg-accent'
                   }`}
                 >
                   {f.label}

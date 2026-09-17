@@ -20,7 +20,7 @@ export function SectionTestimonial({ data, index = 0 }: { data: SectionTestimoni
   return (
     <section id={data.id} className="px-gutter pb-section">
       <Reveal index={index} variant="up" className="mx-auto w-full max-w-content">
-        <figure className="surface-tint flex flex-col gap-6 p-8 md:p-12">
+        <figure className="surface-card flex flex-col gap-6 rounded-[1.25rem] border border-white/65 p-8 md:p-12">
           {data.eyebrow && <Eyebrow>{data.eyebrow}</Eyebrow>}
           <blockquote className="font-display text-title-dense text-ink">
             <span aria-hidden className="text-accent">&ldquo;</span>

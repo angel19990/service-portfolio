@@ -21,35 +21,38 @@ export interface SectionCtaData {
 }
 
 /**
- * The closing invitation. `ink` is the dark band that ends the home page;
- * `paper` is a tinted card for the middle of a page. `showEmail` adds the site
- * email and the schedule-a-call link, so nobody has to fill in a form to say hello.
+ * The closing invitation, in the angelikaux.com "learn more" shape: eyebrow,
+ * heading, a line of copy and the pills. `tone: 'ink'` puts it on a white card
+ * for the end of a page; `paper` sits directly on the ground. `showEmail` adds
+ * the site email and the schedule-a-call link, so nobody has to fill in a form
+ * to say hello.
  */
 export async function SectionCta({ data, index = 0 }: { data: SectionCtaData; index?: number }) {
   const links = data.showEmail ? await sanityFetch<ContactLinks | null>(siteSettingsQuery) : null
   const email = links?.email
   const schedule = links?.scheduleLink?.href ? links.scheduleLink : undefined
-  const ink = data.tone === 'ink'
-  const linkClass = `text-body underline decoration-[2px] underline-offset-4 transition-colors ${
-    ink ? 'text-bg decoration-pop can-hover:hover:text-pop' : 'text-ink decoration-pop can-hover:hover:text-accent'
-  }`
+  const card = data.tone === 'ink'
+  const linkClass =
+    'text-body text-ink underline decoration-rule underline-offset-4 transition-colors can-hover:hover:text-accent can-hover:hover:decoration-accent'
 
   return (
     <section id={data.id} className="px-gutter pb-section">
       <Reveal index={index} variant="up" className="mx-auto w-full max-w-content">
-        <div className={`${ink ? 'band-ink' : 'surface-tint'} flex flex-col items-start gap-stack p-8 md:p-12 lg:p-16`}>
-          {data.eyebrow && <Eyebrow tone={ink ? 'accent' : 'muted'}>{data.eyebrow}</Eyebrow>}
-          {data.heading && <Heading value={data.heading} tier="title" className="max-w-[18ch]" />}
-          {data.body && <RichText value={data.body} className={ink ? 'text-bg/85' : ''} />}
+        <div
+          className={`flex flex-col items-start gap-stack ${
+            card ? 'surface-card rounded-[1.25rem] border border-white/65 p-8 md:p-12 lg:p-16' : ''
+          }`}
+        >
+          {data.eyebrow && <Eyebrow>{data.eyebrow}</Eyebrow>}
+          {data.heading && <Heading value={data.heading} tier="title" className="max-w-[20ch]" />}
+          {data.body && <RichText value={data.body} />}
           {(data.ctas?.length || email || schedule) && (
-            <div className="mt-2 flex flex-wrap items-center gap-4">
-              {data.ctas?.map((cta) => (
-                <Button
-                  key={cta._key ?? cta.href}
-                  cta={cta}
-                  className={ink && cta.tone !== 'filled' ? 'border-bg/40 text-bg can-hover:hover:border-pop can-hover:hover:bg-pop can-hover:hover:text-ink' : ''}
-                />
-              ))}
+            <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-3">
+              <div className="flex flex-wrap gap-3">
+                {data.ctas?.map((cta) => (
+                  <Button key={cta._key ?? cta.href} cta={cta} />
+                ))}
+              </div>
               {email && (
                 <a href={`mailto:${email}`} className={linkClass}>
                   or email {email}

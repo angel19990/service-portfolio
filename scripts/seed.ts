@@ -234,7 +234,6 @@ const projects = [
     order: 2,
     summary: 'A self-initiated redesign of the cruise booking flow, exploring how a family could compare sailings and choose a stateroom with less back-and-forth.',
     contextNote: 'Self-initiated side project. Not commissioned by Disney and not the official Disney Cruise Line website.',
-    client: 'Independent concept',
     role: 'UX design, prototyping',
     brief: rich('proj:dcl:brief', [
       'Booking a cruise is a long comparison: dates, ships, itineraries, stateroom categories and prices all change together. This concept asks how that comparison could feel guided rather than exhausting.',
@@ -261,7 +260,6 @@ const projects = [
     featured: true,
     order: 3,
     summary: 'A personal concept reel that turns a makeup routine into a game level, made to test how far a single product idea can be pushed with performance and motion.',
-    client: 'Personal concept',
     role: 'Concept, performance, editing, motion graphics',
     brief: rich('proj:reel:brief', [
       'A placeholder story for the first creative-video example. Replace this brief with the real concept, the creative decisions, and the finished reel once it is uploaded in the Studio.',
@@ -278,7 +276,6 @@ const projects = [
     featured: false,
     order: 10,
     summary: 'A placeholder for an original interface concept or process breakdown. Replace the title, summary and story with a real experiment.',
-    client: 'Personal project',
     role: 'Everything',
     brief: rich('proj:exp:brief', ['Replace this with the experiment itself: what was tried, what it showed, and what to try next.']),
     outcomes: ['Status: placeholder'],

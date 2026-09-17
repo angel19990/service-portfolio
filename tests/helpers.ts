@@ -18,8 +18,6 @@ export const ROUTES = [
 
 /** Projects with a real touch device profile. */
 export const DEVICE_PROJECTS = ['iphone-se', 'iphone-15', 'pixel-7']
-/** Every project below the `lg` breakpoint, where the header collapses to a sheet. */
-export const NARROW_PROJECTS = ['mobile', 'tablet', ...DEVICE_PROJECTS]
 
 interface AxeNode {
   target: unknown[]
@@ -28,13 +26,23 @@ interface AxeNode {
 }
 
 /**
- * Recorded contrast tradeoffs, as exact colour pairs. Empty on purpose: every
- * text colour in the palette clears AA on every ground it is used on. If a
- * pair ever lands here, it should be because the design decided to keep it,
- * not because a token moved. Suppressing the rule instead would suppress the
- * next regression too.
+ * The recorded contrast tradeoffs, as exact colour pairs: the same decision
+ * angelikaux.com carries. The accent is the site's emphasis, on the wordmark,
+ * the italic heading spans, the bold runs in body copy and the step numbers,
+ * and at #f06b25 it does not reach AA as text on either ground it sits on.
+ *
+ * Exact pairs rather than "ignore color-contrast", so a *new* low-contrast
+ * pairing still fails. If a token under these moves, re-run `verify:survey`
+ * and re-record; do not widen the list to buy a component a colour.
  */
-const ALLOWED: { fg: string; bg: string; why: string }[] = []
+const ALLOWED: { fg: string; bg: string; why: string }[] = [
+  { fg: '#f06b25', bg: '#f6f8fa', why: 'accent text on the ground, 2.88:1' },
+  { fg: '#f06b25', bg: '#fefeff', why: 'accent text on a card surface, 3.04:1' },
+  // The wordmark on the glass header, which is the ground at 90% and composites
+  // differently depending on what has been scrolled under it. Only visible in
+  // non-default states, once a card sits behind the bar.
+  { fg: '#f06b25', bg: '#f7f9fb', why: 'accent wordmark on the glass header, 2.91:1' },
+]
 
 const allowed = (fg?: string, bg?: string) =>
   ALLOWED.some((a) => a.fg === fg?.toLowerCase() && a.bg === bg?.toLowerCase())

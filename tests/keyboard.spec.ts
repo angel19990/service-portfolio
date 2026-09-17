@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { NARROW_PROJECTS, settle } from './helpers'
+import { settle } from './helpers'
 
 test.describe('keyboard', () => {
   test('skip link is the first stop and moves focus to main', async ({ page }, testInfo) => {
@@ -65,8 +65,7 @@ test.describe('keyboard', () => {
     await expect(trigger).toBeFocused()
   })
 
-  test('nav sheet closes on Escape', async ({ page }, testInfo) => {
-    test.skip(!NARROW_PROJECTS.includes(testInfo.project.name), 'the header is inline from lg up')
+  test('nav sheet closes on Escape', async ({ page }) => {
     await page.goto('/work')
     // Located structurally: the accessible name flips to "Close menu" the
     // moment it is pressed.

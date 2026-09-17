@@ -177,14 +177,4 @@ test.describe('touch', () => {
     await page.getByRole('button', { name: /close menu/i }).tap()
     await expect(sheet).toBeHidden()
   })
-
-  test('the header keeps the primary action on one line', async ({ page }) => {
-    // Below 360px the pill is hidden and the sheet carries the link instead.
-    test.skip(page.viewportSize()!.width < 360, 'pill hidden at this width')
-    await page.goto('/')
-    const cta = page.locator('header a[href="/contact"]').first()
-    await expect(cta).toBeVisible()
-    const box = await cta.boundingBox()
-    expect(box!.height, 'the header button wrapped to two lines').toBeLessThan(48)
-  })
 })

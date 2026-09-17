@@ -8,7 +8,7 @@ import type { ProjectCardData, ServiceCardData } from '@/sanity/types'
 export const metadata = { title: 'Components', robots: { index: false } }
 
 const box = (label: string, ratio = 'aspect-video') => (
-  <div className={`${ratio} grid place-items-center rounded-lg bg-tint text-label uppercase text-muted`}>{label}</div>
+  <div className={`${ratio} grid place-items-center rounded-lg bg-ink/5 text-label uppercase text-muted`}>{label}</div>
 )
 
 const PROJECTS: ProjectCardData[] = [

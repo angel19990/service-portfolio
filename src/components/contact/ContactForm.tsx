@@ -68,7 +68,7 @@ export function ContactForm({
 
   if (state.status === 'ready') {
     return (
-      <div role="status" className="surface-tint flex flex-col gap-stack p-8 md:p-10">
+      <div role="status" className="surface-card flex flex-col gap-stack rounded-[1.25rem] border border-white/65 p-8 md:p-10">
         <h2 ref={readyRef} tabIndex={-1} className="font-display text-title-dense text-ink focus:outline-none">
           {successHeading}
         </h2>
@@ -76,7 +76,7 @@ export function ContactForm({
         <div className="flex flex-wrap items-center gap-4">
           <a
             href={state.href}
-            className="inline-flex items-center rounded-full border border-accent bg-accent px-5 py-2.5 text-body font-medium text-white transition-colors duration-[--duration-sm] can-hover:hover:bg-ink can-hover:hover:border-ink"
+            className="inline-flex items-center rounded-full border border-accent/55 bg-[linear-gradient(180deg,rgb(240_107_37/0.95),rgb(227_97_30/0.95))] px-4 py-2.5 text-body text-ink shadow-sm transition-[transform,box-shadow] duration-[--duration-sm] can-hover:hover:-translate-y-px can-hover:hover:shadow-md"
           >
             Open the email again
           </a>
@@ -85,7 +85,7 @@ export function ContactForm({
               href={schedule.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-body text-ink underline decoration-pop decoration-[2px] underline-offset-4 transition-colors can-hover:hover:text-accent"
+              className="text-body text-ink underline decoration-rule underline-offset-4 transition-colors can-hover:hover:text-accent can-hover:hover:decoration-accent"
             >
               {schedule.label}
               <span aria-hidden> ↗</span>
@@ -107,7 +107,7 @@ export function ContactForm({
     'aria-describedby': errors[name] ? `${uid}-${name}-error` : undefined,
   })
   const inputClass =
-    'w-full rounded-md border border-rule bg-surface px-4 py-3 text-body text-ink placeholder:text-muted/70 aria-[invalid]:border-accent'
+    'w-full rounded-lg border border-rule bg-surface/80 px-4 py-3 text-body text-ink placeholder:text-muted/70 aria-[invalid]:border-accent'
   const labelClass = 'text-[0.9375rem] font-medium text-ink'
   const fieldError = (name: keyof ContactErrors) =>
     errors[name] ? (
@@ -161,9 +161,9 @@ export function ContactForm({
           {SERVICES.map((s) => (
             <label
               key={s.value}
-              className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-rule bg-surface px-4 text-[0.9375rem] text-ink has-[:checked]:border-ink has-[:checked]:bg-ink has-[:checked]:text-bg"
+              className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-accent/55 bg-white/60 px-4 text-[0.9375rem] text-ink transition-colors duration-[--duration-sm] has-[:checked]:border-accent has-[:checked]:bg-accent"
             >
-              <input type="radio" name="service" value={s.value} required className="size-4 accent-accent" />
+              <input type="radio" name="service" value={s.value} required className="size-4 accent-[#f06b25]" />
               {s.label}
             </label>
           ))}
@@ -233,7 +233,7 @@ export function ContactForm({
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
         <button
           type="submit"
-          className="inline-flex items-center rounded-full border border-accent bg-accent px-6 py-3 text-body font-medium text-white shadow-sm transition-[background-color,transform] duration-[--duration-sm] can-hover:hover:-translate-y-px can-hover:hover:bg-ink can-hover:hover:border-ink"
+          className="inline-flex items-center rounded-full border border-accent/55 bg-[linear-gradient(180deg,rgb(240_107_37/0.95),rgb(227_97_30/0.95))] px-5 py-2.5 text-body text-ink shadow-sm transition-[transform,box-shadow] duration-[--duration-sm] can-hover:hover:-translate-y-px can-hover:hover:shadow-md"
         >
           Open in my mail app
         </button>
@@ -242,7 +242,7 @@ export function ContactForm({
             href={schedule.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-body text-ink underline decoration-pop decoration-[2px] underline-offset-4 transition-colors can-hover:hover:text-accent"
+            className="text-body text-ink underline decoration-rule underline-offset-4 transition-colors can-hover:hover:text-accent can-hover:hover:decoration-accent"
           >
             {schedule.label}
             <span aria-hidden> ↗</span>

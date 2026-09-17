@@ -34,7 +34,7 @@ export function SectionStatement({ data, index = 0 }: { data: SectionStatementDa
       {data.meta && data.meta.length > 0 && (
         <ul className={`flex flex-wrap items-center gap-2 ${centred ? 'justify-center' : ''}`}>
           {data.meta.map((m) => (
-            <li key={m} className="rounded-full border border-rule bg-surface px-3.5 py-1.5 text-label uppercase text-muted">
+            <li key={m} className="rounded-full border border-rule-soft bg-surface/70 px-3.5 py-1.5 text-label uppercase text-muted">
               {m}
             </li>
           ))}

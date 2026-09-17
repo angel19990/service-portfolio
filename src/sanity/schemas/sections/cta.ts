@@ -22,8 +22,8 @@ export const sectionCta = defineType({
       initialValue: 'paper',
       options: {
         list: [
-          { title: 'Paper', value: 'paper' },
-          { title: 'Ink (dark band)', value: 'ink' },
+          { title: 'On the page', value: 'paper' },
+          { title: 'On a card', value: 'ink' },
         ],
         layout: 'radio',
         direction: 'horizontal',

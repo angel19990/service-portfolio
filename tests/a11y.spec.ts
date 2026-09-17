@@ -1,5 +1,5 @@
 import { test } from '@playwright/test'
-import { ROUTES, NARROW_PROJECTS, checkA11y, settle } from './helpers'
+import { ROUTES, checkA11y, settle } from './helpers'
 
 /** The default state of every route, at every width. */
 test.describe('axe: default state', () => {
@@ -70,8 +70,8 @@ test.describe('axe: non-default states', () => {
     await checkA11y(page, `contact, ready state @ ${testInfo.project.name}`)
   })
 
+  // Runs at every width: the bar is a menu button at 1440 too.
   test('nav sheet open', async ({ page }, testInfo) => {
-    test.skip(!NARROW_PROJECTS.includes(testInfo.project.name), 'the header is inline from lg up')
     await page.goto('/work')
     await settle(page)
     await page.getByRole('button', { name: /open menu/i }).click()

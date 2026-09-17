@@ -4,6 +4,7 @@ import type { RichHeading } from '@/sanity/types'
 
 const TIER = {
   display: 'text-display',
+  'title-cover': 'text-title-cover',
   title: 'text-title',
   'title-dense': 'text-title-dense',
   h2: 'text-h2',

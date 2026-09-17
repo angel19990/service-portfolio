@@ -16,18 +16,23 @@ export const TYPE_LABEL: Record<ProjectType, string> = {
 }
 
 /**
- * One project, as a card: the finished result first, then the name, the two
- * labels (what kind of work, and whose it was), the role and the challenge.
- * The context note rides along so a concept is never shown without its
- * disclaimer, on any surface.
+ * One project, as a card in the angelikaux.com style: the finished result
+ * running edge to edge, then a muted uppercase label line, the title in the
+ * display face, the role and the challenge. The context note rides along so a
+ * concept is never shown without its disclaimer, on any surface.
  */
 export function ProjectCard({ project, index = 0 }: { project: ProjectCardData; index?: number }) {
   const isVideo = project.category === 'video'
+  const ratio = isVideo ? 'aspect-[4/5]' : 'aspect-[4/3]'
   return (
     <Reveal as="li" index={index} variant="up" data-category={project.category} className="flex">
       <Link
         href={`/work/${project.slug}`}
-        className="surface-card group flex w-full flex-col overflow-hidden transition-[transform,box-shadow] duration-[--duration-md] ease-[--ease-out-expo] can-hover:hover:-translate-y-1"
+        className={[
+          'surface-card group flex h-full w-full flex-col overflow-hidden rounded-[1.25rem] border border-white/65',
+          'transform-gpu transition-[border-color,box-shadow,transform] duration-[820ms] ease-[cubic-bezier(0.19,1,0.22,1)]',
+          'can-hover:hover:-translate-y-0.5 can-hover:hover:border-accent/40 can-hover:hover:shadow-[0_22px_48px_-30px_rgb(20_19_18/0.2),0_6px_16px_rgb(20_19_18/0.05)]',
+        ].join(' ')}
       >
         {project.cover?.length ? (
           <Media
@@ -35,26 +40,25 @@ export function ProjectCard({ project, index = 0 }: { project: ProjectCardData; 
             sizes="(max-width: 768px) 100vw, 45vw"
             passive
             fit="cover"
-            className={`w-full overflow-hidden ${isVideo ? 'aspect-[4/5]' : 'aspect-[4/3]'} [&_img]:h-full [&_img]:object-cover [&_video]:h-full`}
+            className={`w-full overflow-hidden ${ratio} [&_img]:h-full [&_img]:object-cover [&_video]:h-full`}
           />
         ) : (
-          <div className={`w-full bg-tint ${isVideo ? 'aspect-[4/5]' : 'aspect-[4/3]'}`} aria-hidden />
+          <div className={`w-full bg-ink/[0.03] ${ratio}`} aria-hidden />
         )}
 
-        <div className="flex flex-1 flex-col gap-3 p-5 md:p-6">
-          <div className="flex flex-wrap items-center gap-2 text-label uppercase">
-            <span className={`rounded-full px-2.5 py-1 ${isVideo ? 'bg-coral text-ink' : 'bg-pop text-ink'}`}>
-              {CATEGORY_LABEL[project.category]}
-            </span>
-            <span className="text-muted">{TYPE_LABEL[project.projectType]}</span>
-          </div>
-          <h3 className="font-display text-title-dense text-ink transition-colors can-hover:group-hover:text-accent">
+        <div className="flex flex-1 flex-col gap-2.5 p-5">
+          <span className="text-label uppercase text-muted">
+            {[project.client, CATEGORY_LABEL[project.category], TYPE_LABEL[project.projectType]]
+              .filter(Boolean)
+              .join(' · ')}
+          </span>
+          <span className="font-display text-h2 text-ink transition-colors duration-[820ms] ease-[cubic-bezier(0.19,1,0.22,1)] can-hover:group-hover:text-accent">
             {project.title}
-          </h3>
-          {project.role && <p className="text-[0.9375rem] text-muted">{project.role}</p>}
-          {project.summary && <p className="text-text">{project.summary}</p>}
+          </span>
+          {project.role && <span className="text-[0.9375rem] text-muted">{project.role}</span>}
+          {project.summary && <span className="max-w-[52ch] text-text">{project.summary}</span>}
           {project.contextNote && (
-            <p className="mt-auto border-t border-rule-soft pt-3 text-[0.875rem] text-muted">{project.contextNote}</p>
+            <span className="mt-auto border-t border-rule-soft pt-3 text-[0.875rem] text-muted">{project.contextNote}</span>
           )}
         </div>
       </Link>

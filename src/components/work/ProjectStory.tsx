@@ -32,21 +32,18 @@ export function ProjectStory({ doc }: { doc: ProjectDoc }) {
     <>
       <section className="px-gutter pb-band">
         <Reveal index={i++} variant="up" className="mx-auto flex w-full max-w-content flex-col gap-stack">
-          <div className="flex flex-wrap items-center gap-2 text-label uppercase">
-            <span className={`rounded-full px-2.5 py-1 ${doc.category === 'video' ? 'bg-coral text-ink' : 'bg-pop text-ink'}`}>
-              {CATEGORY_LABEL[doc.category]}
-            </span>
-            <span className="text-muted">{TYPE_LABEL[doc.projectType]}</span>
-          </div>
+          <p className="text-label uppercase text-muted">
+            {[doc.client, CATEGORY_LABEL[doc.category], TYPE_LABEL[doc.projectType]].filter(Boolean).join(' · ')}
+          </p>
           <h1 className="max-w-[20ch] font-display text-title text-balance text-ink">{doc.title}</h1>
           {doc.summary && <p className="max-w-[62ch] text-[1.125rem] text-text md:text-[1.25rem]">{doc.summary}</p>}
           {doc.contextNote && (
-            <p role="note" className="max-w-[62ch] rounded-md border border-rule bg-surface px-4 py-3 text-[0.9375rem] text-muted">
+            <p role="note" className="max-w-[62ch] rounded-lg border border-rule-soft bg-surface/70 px-4 py-3 text-[0.9375rem] text-muted">
               {doc.contextNote}
             </p>
           )}
           {meta.length > 0 && (
-            <dl className="mt-2 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-rule pt-6 md:grid-cols-4">
+            <dl className="mt-2 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-rule-soft pt-6 md:grid-cols-4">
               {meta.map((m) => (
                 <div key={m.label} className="flex flex-col gap-1">
                   <dt className="text-label uppercase text-muted">{m.label}</dt>
@@ -81,7 +78,7 @@ export function ProjectStory({ doc }: { doc: ProjectDoc }) {
             <Eyebrow>Decisions</Eyebrow>
             <ol className="flex flex-col gap-6">
               {doc.decisions.map((d, n) => (
-                <li key={d._key ?? n} className="grid grid-cols-[2.5rem_1fr] gap-4 border-t border-rule pt-6 first:border-t-0 first:pt-0">
+                <li key={d._key ?? n} className="grid grid-cols-[2.5rem_1fr] gap-4 border-t border-rule-soft pt-6 first:border-t-0 first:pt-0">
                   <span aria-hidden className="font-display text-h2 text-accent">
                     {String(n + 1).padStart(2, '0')}
                   </span>
@@ -102,7 +99,7 @@ export function ProjectStory({ doc }: { doc: ProjectDoc }) {
             <Eyebrow>Deliverables and outcomes</Eyebrow>
             <ul className="flex flex-col gap-2.5 text-text">
               {doc.outcomes.map((o) => (
-                <li key={o} className="relative pl-6 before:absolute before:left-0 before:top-[0.7em] before:h-[3px] before:w-3.5 before:rounded-full before:bg-pop">
+                <li key={o} className="relative pl-6 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-3 before:bg-accent">
                   {o}
                 </li>
               ))}

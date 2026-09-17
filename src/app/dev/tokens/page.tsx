@@ -30,6 +30,7 @@ const BODY: PortableTextBlock[] = [
 
 const TIERS = [
   ['display', 'text-display', 'Playful videos.'],
+  ['title-cover', 'text-title-cover', 'Angelika'],
   ['title', 'text-title', 'Two offers, scoped to fit.'],
   ['title-dense', 'text-title-dense', 'Four stages, no surprises'],
   ['h2', 'text-h2', 'Section heading'],
@@ -39,8 +40,8 @@ const TIERS = [
 ] as const
 
 const COLORS = [
-  ['bg', 'bg-bg'], ['surface', 'bg-surface'], ['tint', 'bg-tint'], ['ink', 'bg-ink'], ['text', 'bg-text'],
-  ['muted', 'bg-muted'], ['accent', 'bg-accent'], ['pop', 'bg-pop'], ['coral', 'bg-coral'],
+  ['bg', 'bg-bg'], ['surface', 'bg-surface'], ['ink', 'bg-ink'], ['text', 'bg-text'],
+  ['muted', 'bg-muted'], ['muted-2', 'bg-muted-2'], ['accent', 'bg-accent'],
   ['rule', 'bg-rule'], ['rule-soft', 'bg-rule-soft'], ['scrim', 'bg-scrim'],
 ] as const
 
@@ -52,9 +53,9 @@ const RADII = [
 ] as const
 
 const SURFACES = [
-  ['surface-card', 'surface-card'],
-  ['surface-tint', 'surface-tint'],
-  ['band-ink', 'band-ink'],
+  ['surface-card', 'surface-card rounded-[1.25rem]'],
+  ['surface-card-strong', 'surface-card-strong rounded-[1.25rem]'],
+  ['media-frame', 'media-frame'],
   ['media-fit', 'media-fit bg-surface'],
   ['media-empty', 'media-empty'],
 ] as const

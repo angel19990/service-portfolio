@@ -10,7 +10,6 @@ import type { ServiceCardData } from '@/sanity/types'
  * Both cards render identically so neither offer reads as the lesser one.
  */
 export function ServiceCard({ service, index = 0 }: { service: ServiceCardData; index?: number }) {
-  const isVideo = service.key === 'video'
   const list = (label: string, items?: string[]) =>
     items && items.length > 0 ? (
       <div className="flex flex-col gap-2">
@@ -19,9 +18,7 @@ export function ServiceCard({ service, index = 0 }: { service: ServiceCardData; 
           {items.map((item) => (
             <li
               key={item}
-              className={`relative pl-5 before:absolute before:left-0 before:top-[0.65em] before:h-[3px] before:w-3 before:rounded-full ${
-                isVideo ? 'before:bg-coral' : 'before:bg-pop'
-              }`}
+              className="relative pl-5 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-3 before:bg-accent"
             >
               {item}
             </li>
@@ -32,7 +29,7 @@ export function ServiceCard({ service, index = 0 }: { service: ServiceCardData; 
 
   return (
     <Reveal as="li" index={index} variant="up" className="flex">
-      <article className="surface-card flex w-full flex-col overflow-hidden">
+      <article className="surface-card flex w-full flex-col overflow-hidden rounded-[1.25rem] border border-white/65">
         {service.media?.length ? (
           <Media
             value={service.media}
@@ -42,12 +39,12 @@ export function ServiceCard({ service, index = 0 }: { service: ServiceCardData; 
             className="aspect-[16/10] w-full overflow-hidden [&_img]:h-full [&_img]:object-cover [&_video]:h-full"
           />
         ) : (
-          <div className={`aspect-[16/10] w-full ${isVideo ? 'bg-coral/25' : 'bg-pop/35'}`} aria-hidden />
+          <div className="aspect-[16/10] w-full bg-ink/[0.03]" aria-hidden />
         )}
 
         <div className="flex flex-1 flex-col gap-6 p-6 md:p-8">
           <div className="flex flex-col gap-3">
-            <h3 className="font-display text-title-dense text-ink">
+            <h3 className="font-display text-h2 text-ink">
               <Link href={service.href} className="transition-colors can-hover:hover:text-accent">
                 {service.title}
               </Link>
@@ -80,7 +77,7 @@ export function ServiceCard({ service, index = 0 }: { service: ServiceCardData; 
             <Button cta={service.cta} />
             <Link
               href={service.href}
-              className="text-[0.9375rem] font-medium text-ink underline decoration-rule underline-offset-4 transition-colors can-hover:hover:text-accent can-hover:hover:decoration-accent"
+              className="text-[0.9375rem] text-ink underline decoration-rule underline-offset-4 transition-colors can-hover:hover:text-accent can-hover:hover:decoration-accent"
             >
               How it works
             </Link>

@@ -20,23 +20,20 @@ export default function OpenGraphImage() {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: 72,
-          background: '#faf7f2',
-          color: '#1c1917',
+          background: '#f6f8fa',
+          color: '#141312',
           fontFamily: 'Georgia, "Times New Roman", serif',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 28, color: '#6b655d' }}>
-          <div style={{ width: 18, height: 18, borderRadius: 9999, background: '#f9c74f' }} />
-          angelikacheng.com
-        </div>
+        <div style={{ display: 'flex', fontSize: 30, fontStyle: 'italic', color: '#f06b25' }}>Angelika Cheng</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ fontSize: 108, lineHeight: 1.02, letterSpacing: -2, color: '#b4380d' }}>
+          <div style={{ fontSize: 108, lineHeight: 1.02, letterSpacing: -2, fontStyle: 'italic', color: '#f06b25' }}>
             Thoughtful UX.
           </div>
           <div style={{ fontSize: 108, lineHeight: 1.02, letterSpacing: -2 }}>Playful videos.</div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 30, color: '#3a3632' }}>
-          <div>Angelika Cheng</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 28, color: '#767169', textTransform: 'uppercase', letterSpacing: 4 }}>
+          <div>angelikacheng.com</div>
           <div>UX & product design · creative video</div>
         </div>
       </div>

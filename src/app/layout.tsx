@@ -1,27 +1,25 @@
 import type { Metadata } from 'next'
-import { Fraunces, DM_Sans } from 'next/font/google'
+import { Prata, Inter } from 'next/font/google'
 import './globals.css'
 import { SITE_URL } from '@/sanity/lib/routes'
 import { SITE_NAME, SITE_TITLE, SITE_DESCRIPTION } from '@/lib/site'
 
 /*
  * Self-hosted through next/font: no render-blocking third-party stylesheet and
- * no FOIT on the display tier. Both are variable fonts with real italics, so
- * nothing on the site is synthesised.
+ * no FOIT on the display tier, where Prata carries every heading. The same
+ * pairing as angelikaux.com, so the two sites read as one person's.
  */
-const fraunces = Fraunces({
+const prata = Prata({
+  weight: '400',
   subsets: ['latin'],
-  style: ['normal', 'italic'],
-  axes: ['SOFT', 'WONK', 'opsz'],
-  variable: '--font-fraunces',
+  variable: '--font-prata',
   display: 'swap',
 })
 
-const dmSans = DM_Sans({
+const inter = Inter({
+  weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
-  style: ['normal', 'italic'],
-  axes: ['opsz'],
-  variable: '--font-dm-sans',
+  variable: '--font-inter',
   display: 'swap',
 })
 
@@ -41,7 +39,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${dmSans.variable} h-full`}>
+    <html lang="en" className={`${prata.variable} ${inter.variable} h-full`}>
       <head>
         {/* Every image on the site is cross-origin from the Sanity CDN; the
             handshake is paid before the LCP request can start without this. */}

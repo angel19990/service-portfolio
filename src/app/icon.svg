@@ -1,7 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- A paper tile, a terracotta A drawn as strokes so it needs no webfont, and
-       the marigold dot the wordmark carries. -->
-  <rect width="32" height="32" rx="7" fill="#faf7f2"/>
-  <path d="M8 24 L15 8 L22 24 M10.6 18.4 H19.4" fill="none" stroke="#b4380d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="25.5" cy="23.5" r="2.8" fill="#f9c74f"/>
+  <rect width="32" height="32" rx="7" fill="#ffffff"/>
+  <!--
+    The A is the real Prata capital, the same face the display token carries on
+    every heading, with its outline lifted out of the woff2 rather than set as
+    <text>: SVG favicons get no webfont, so a text node would render in whatever
+    serif the OS hands it and the mark would differ per platform. Glyph space is
+    1000 upem, y up, baseline at 0 — the 0.0231707 scale puts its 820 unit cap
+    height at 19px, and the negative y flips it into SVG's y down frame with the
+    baseline landing at 25.5, the same optical box the old geometric A sat in.
+  -->
+  <path fill="#141312" fill-rule="evenodd" transform="translate(3.849 25.5) scale(0.0231707 -0.0231707)" d="M-28 0L-28 21L70 61L359 820L375 820L648 36L740 21L740 0L446 0L446 21L528 34L443 271L177 271L96 61L186 21L186 0ZM185 292L436 292L316 644Z"/>
+  <circle cx="26.4" cy="23.4" r="2.6" fill="#f06b25"/>
 </svg>

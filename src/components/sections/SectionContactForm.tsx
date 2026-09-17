@@ -41,7 +41,7 @@ export async function SectionContactForm({ data, index = 0 }: { data: SectionCon
             {data.heading && <Heading value={data.heading} tier="title" />}
             {data.intro && <RichText value={data.intro} />}
             {data.nextSteps && (
-              <div className="surface-tint p-6">
+              <div className="surface-card rounded-[1.25rem] border border-white/65 p-6">
                 <RichText value={data.nextSteps} className="text-[0.9375rem]" />
               </div>
             )}

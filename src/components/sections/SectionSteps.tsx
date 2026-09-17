@@ -20,10 +20,10 @@ export function SectionSteps({ data, index = 0 }: { data: SectionStepsData; inde
   return (
     <SectionShell id={data.id} eyebrow={data.eyebrow} heading={data.heading} index={index}>
       {data.intro && <RichText value={data.intro} />}
-      <ol className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+      <ol className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
         {steps.map((step, i) => (
-          <li key={step._key ?? i} className="surface-tint flex flex-col gap-3 p-6">
-            <span className="font-display text-title-dense text-accent" aria-hidden>
+          <li key={step._key ?? i} className="surface-card flex flex-col gap-3 rounded-[1.25rem] border border-white/65 p-6">
+            <span className="text-label uppercase text-accent" aria-hidden>
               {String(i + 1).padStart(2, '0')}
             </span>
             <h3 className="font-display text-h2 text-ink">
@@ -32,7 +32,7 @@ export function SectionSteps({ data, index = 0 }: { data: SectionStepsData; inde
             </h3>
             {step.body && <RichText value={step.body} className="text-[0.9375rem]" />}
             {step.clientInput && (
-              <p className="mt-auto border-t border-rule pt-3 text-[0.875rem] text-muted">
+              <p className="mt-auto border-t border-rule-soft pt-3 text-[0.875rem] text-muted">
                 <span className="text-label uppercase">You bring: </span>
                 {step.clientInput}
               </p>

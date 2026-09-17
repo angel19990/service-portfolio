@@ -2,10 +2,12 @@ import type { PortableTextComponents } from '@portabletext/react'
 import Link from 'next/link'
 
 /**
- * The `accent` decorator: terracotta, italic. Fraunces ships a real italic with
- * its own "wonky" alternates, so the emphasis reads as a different voice rather
- * than a slanted copy of the same one.
+ * The `accent` decorator is the deck's signature emphasis — accent colour, italic.
+ * It is a decorator rather than an annotation because it carries no data, which
+ * means it renders in exactly one place: here.
  */
+// Prata ships no italic face, so the browser synthesises an oblique — which is
+// exactly what the deck did with `font-style: italic` on `.slide-title .orange`.
 const accent = ({ children }: { children?: React.ReactNode }) => (
   <em className="text-accent italic">{children}</em>
 )
@@ -37,7 +39,7 @@ export const bodyComponents: PortableTextComponents = {
   marks: {
     accent,
     link,
-    strong: ({ children }) => <strong className="font-semibold text-ink">{children}</strong>,
+    strong: ({ children }) => <strong className="font-semibold text-accent">{children}</strong>,
   },
   block: {
     normal: ({ children }) => <p className="max-w-[62ch]">{children}</p>,
@@ -57,12 +59,12 @@ export const bodyComponents: PortableTextComponents = {
   },
 }
 
-/** Single-paragraph fields: card copy, footnotes, one-line proofs. */
+/** Single-paragraph fields — agenda items, bullet leads, capability details. */
 export const inlineComponents: PortableTextComponents = {
   marks: {
     accent,
     link,
-    strong: ({ children }) => <strong className="font-semibold text-ink">{children}</strong>,
+    strong: ({ children }) => <strong className="font-semibold text-accent">{children}</strong>,
   },
   block: { normal: ({ children }) => <>{children}</> },
 }
