@@ -1,0 +1,341 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens: color/*, type/size/*, space/*, radius/*, motion/*.
+ *
+ * The type and space ramps are fluid clamp() anchored at 375 and 1440, one token
+ * per tier, rather than per-breakpoint overrides. Three sets of numbers to
+ * maintain would guarantee drift, and the ~1024 dead zone always looks wrong.
+ */
+@custom-variant can-hover (@media (hover: hover) and (pointer: fine));
+@custom-variant touch (@media (hover: none));
+
+@theme {
+  /* ---------- color ---------- */
+  /* Warm paper, not cool grey. Every text colour below clears 4.5:1 on `bg`,
+     `surface` and `tint`, so the test suite carries no contrast allowlist. A
+     colour pair is only ever a ratio with its neighbour: move `bg` or `tint`
+     and re-run `npm run verify:survey` before trusting any of these again. */
+  --color-bg: #faf7f2;
+  --color-surface: #ffffff;
+  --color-tint: #f3eee6;
+  --color-ink: #1c1917;
+  --color-text: #3a3632;
+  /* Eyebrows, labels, meta. 5.39:1 on bg, 4.99:1 on tint. */
+  --color-muted: #6b655d;
+  /* Terracotta. Text-safe: 5.60:1 on bg, and white on it is 5.98:1, so it can
+     carry links, accent marks and the filled button without a second token. */
+  --color-accent: #b4380d;
+  /* Marigold. Fills, underlines and the dot in the wordmark only; never text on
+     a light ground (1.6:1). Ink on it is 11:1, so it works as a highlight
+     behind dark text and as text on the ink band. */
+  --color-pop: #f9c74f;
+  /* Coral. The video side's decoration: hover washes, small fills. Never text. */
+  --color-coral: #ff8a5b;
+  --color-rule: rgb(28 25 23 / 0.12);
+  --color-rule-soft: rgb(28 25 23 / 0.06);
+  --color-scrim: rgb(28 25 23 / 0.6);
+
+  /* ---------- font ---------- */
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* ---------- type ramp: 375 → 1440 ---------- */
+  /* 40 → 58.4 → 90 */
+  --text-display: clamp(2.5rem, 1.5317rem + 4.1315vw, 5.25rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.02em;
+
+  /* 34 → 45.1 → 64 */
+  --text-title: clamp(2rem, 1.4718rem + 2.2535vw, 3.5rem);
+  --text-title--line-height: 1.08;
+  --text-title--letter-spacing: -0.015em;
+
+  /* 28 → 33.2 → 42 */
+  --text-title-dense: clamp(1.6875rem, 1.4014rem + 1.2207vw, 2.5rem);
+  --text-title-dense--line-height: 1.16;
+  --text-title-dense--letter-spacing: -0.01em;
+
+  /* 21 → 22.8 → 26 */
+  --text-h2: clamp(1.25rem, 1.1399rem + 0.4695vw, 1.5625rem);
+  --text-h2--line-height: 1.28;
+
+  /* 17 → 18.1 → 20 */
+  --text-body: clamp(1.0625rem, 1.0185rem + 0.1878vw, 1.1875rem);
+  --text-body--line-height: 1.58;
+
+  /* 12 → 13.1 → 15 */
+  --text-eyebrow: clamp(0.75rem, 0.684rem + 0.2817vw, 0.9375rem);
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.18em;
+  --text-eyebrow--font-weight: 600;
+
+  /* fixed: 11px is the floor for a tracked label */
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.16em;
+  --text-label--font-weight: 600;
+
+  /* ---------- layout space ---------- */
+  --spacing-gutter: clamp(1.25rem, -0.4225rem + 7.1362vw, 6rem); /* 20 → 96 */
+  --spacing-section: clamp(4rem, 1.8873rem + 9.0141vw, 10rem); /* 64 → 160 */
+  /* `band`, not `block`: every `--spacing-X` token also generates an `inline-X`
+     utility, and a token named `block` mints a second `.inline-block` rule that
+     sets `inline-size`. Do not name a spacing token block, flex, grid or table. */
+  --spacing-band: clamp(2rem, 1.2958rem + 3.0047vw, 4rem); /* 32 → 64 */
+  --spacing-stack: clamp(1rem, 0.8239rem + 0.7512vw, 1.5rem); /* 16 → 24 */
+  /* The first band clears the sticky nav. 56 → 80 → 120. */
+  --spacing-page-top: clamp(3.5rem, 2.0915rem + 6.0094vw, 7.5rem);
+
+  /* The 1248px content column. */
+  --container-content: 78rem;
+
+  /* ---------- radius ---------- */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
+  --radius-full: 9999px;
+
+  /* ---------- shadow ---------- */
+  --shadow-xs: 0 6px 16px -12px rgb(28 25 23 / 0.16);
+  --shadow-sm: 0 14px 32px -24px rgb(28 25 23 / 0.16);
+  --shadow-md: 0 16px 36px -24px rgb(28 25 23 / 0.18), 0 1px 3px rgb(28 25 23 / 0.05);
+  --shadow-lg: 0 24px 54px -28px rgb(28 25 23 / 0.18), 0 4px 12px rgb(28 25 23 / 0.06);
+  --shadow-xl: 0 36px 88px -28px rgb(28 25 23 / 0.28), 0 0 0 1px rgb(255 255 255 / 0.12);
+
+  /* ---------- motion ---------- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* An overshooting curve puts a small pop past the target without a keyframe
+     per element, which is what lets the entrance be a reversible transition. */
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-sm: 180ms;
+  --duration-md: 420ms;
+  --duration-lg: 720ms;
+
+  /* ---------- breakpoints ---------- */
+  --breakpoint-md: 48rem; /* 768 */
+  --breakpoint-lg: 64rem; /* 1024: the header goes inline */
+  --breakpoint-xl: 80rem; /* 1280 */
+}
+
+@layer theme {
+  :root {
+    --motion-shift: 18px;
+    --motion-step: 70ms;
+    /* How small an element starts before it pops back to 1. */
+    --motion-pop: 0.965;
+    /* Two rings: a bg-coloured spread, then accent. A plain outline is
+       illegible against the paper at several of the places focus lands. */
+    --ring-focus: 0 0 0 3px var(--color-bg), 0 0 0 5px var(--color-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --motion-shift: 0px;
+      --motion-step: 0ms;
+      --motion-pop: 1;
+    }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scrollbar-gutter: stable;
+  }
+
+  /* One flat ground. Depth comes from cards and shadows, not gradients, which
+     also keeps every contrast ratio a single number. */
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.58;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* Fraunces is a variable optical-size serif; a little softness and the
+     "wonky" alternates give the display tier its character. */
+  .font-display {
+    font-weight: 500;
+    font-variation-settings: "SOFT" 40, "WONK" 0;
+  }
+  .font-display em,
+  .font-display .italic {
+    font-variation-settings: "SOFT" 80, "WONK" 1;
+  }
+
+  :where(a, button, [tabindex], summary, input, select, textarea):focus-visible {
+    outline: none;
+    box-shadow: var(--ring-focus);
+    border-radius: var(--radius-xs);
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-pop) 55%, transparent);
+  }
+
+  :where(a, button) {
+    transition:
+      color var(--duration-sm) ease,
+      border-color var(--duration-sm) ease,
+      background-color var(--duration-sm) ease,
+      transform var(--duration-sm) var(--ease-out-expo),
+      box-shadow var(--duration-md) var(--ease-out-expo);
+  }
+
+  /* Anchored sections must clear the sticky header. */
+  :where([id]) {
+    scroll-margin-top: 6rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Scroll-triggered entrance. One shared IntersectionObserver toggles
+     data-revealed; the index staggers via --reveal-i. A transition, not an
+     animation, because the observer is two-way: the hidden state has to be a
+     place the element can travel back to. */
+  [data-reveal] {
+    --reveal-x: 0px;
+    --reveal-y: var(--motion-shift);
+    opacity: 0;
+    transform: translate3d(var(--reveal-x), var(--reveal-y), 0) scale(var(--motion-pop));
+    transition:
+      opacity var(--duration-md) var(--ease-out-expo),
+      transform var(--duration-md) var(--ease-out-expo);
+  }
+  [data-reveal="fade"] {
+    --reveal-y: 0px;
+  }
+  [data-reveal="left"] {
+    --reveal-x: calc(-1 * var(--motion-shift));
+    --reveal-y: 0px;
+  }
+  [data-reveal="right"] {
+    --reveal-x: var(--motion-shift);
+    --reveal-y: 0px;
+  }
+  [data-reveal][data-revealed] {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--duration-md) var(--ease-out-expo),
+      transform var(--duration-lg) var(--ease-pop);
+    transition-delay: calc(min(var(--reveal-i, 0), 6) * var(--motion-step));
+  }
+
+  /* Horizontal rails: the filter strip on narrow screens. */
+  .rail-x {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .rail-x::-webkit-scrollbar {
+    display: none;
+  }
+  .rail-x > * {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  /*
+   * The sticky header. The ground as literal RGBA: a translucent bar has to
+   * composite against the same colour the page is. Move `--color-bg` and this
+   * moves with it or the chrome reads as a mis-tinted bar.
+   */
+  .surface-glass {
+    background: rgb(250 247 242 / 0.88);
+    box-shadow: var(--shadow-xs);
+    backdrop-filter: blur(16px) saturate(100%);
+  }
+
+  /*
+   * Raw CSS for surfaces and media, and for a reason worth writing down: the
+   * `shadow-*` and `rounded-[--var]` utilities do not work in this project.
+   * `--shadow-md` reaches `--tw-shadow` but the composed `box-shadow` never
+   * lands, and Tailwind v4 dropped the bare `[--var]` shorthand. Every shadow
+   * you can see on this site comes from one of these rules.
+   */
+  .surface-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-rule-soft);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+  }
+
+  .surface-card-strong {
+    background: rgb(255 255 255 / 0.96);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .surface-tint {
+    background: var(--color-tint);
+    border-radius: var(--radius-2xl);
+  }
+
+  /* The dark closing band. Text tokens invert inside it. */
+  .band-ink {
+    background: var(--color-ink);
+    color: var(--color-bg);
+    border-radius: var(--radius-2xl);
+  }
+  .band-ink :where(h1, h2, h3, p) {
+    color: var(--color-bg);
+  }
+  .band-ink .text-muted {
+    color: rgb(250 247 242 / 0.72);
+  }
+
+  /* Supporting media: its own shape, rounded, with a shadow. */
+  .media-fit {
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* An empty media slot: the same shape, a tint, and nothing to say. */
+  .media-empty {
+    border-radius: var(--radius-xl);
+    background: var(--color-tint);
+    border: 1px dashed var(--color-rule);
+  }
+
+  /*
+   * The /work filter. The grid is server-rendered in full; the client rail only
+   * sets `data-filter` on it, and these rules do the hiding. The page stays
+   * static and `?filter=video` deep-links work with JavaScript off (every card
+   * simply shows).
+   */
+  .project-grid[data-filter="ux"] > [data-category]:not([data-category="ux"]),
+  .project-grid[data-filter="video"] > [data-category]:not([data-category="video"]),
+  .project-grid[data-filter="experiment"] > [data-category]:not([data-category="experiment"]) {
+    display: none;
+  }
+
+  /* A marigold highlight behind a word: the one place `pop` touches text. */
+  .highlight-pop {
+    background-image: linear-gradient(transparent 62%, var(--color-pop) 62%, var(--color-pop) 92%, transparent 92%);
+    padding-inline: 0.04em;
+  }
+}
